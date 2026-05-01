@@ -112,7 +112,7 @@ int main() {
     continue;
     }
     if(command==commands[3]){
-      std::cout<<path<<std::endl;
+      std::cout<<std::filesystem::current_path().string()<<std::endl;
       continue;
     }
     
