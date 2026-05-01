@@ -18,8 +18,8 @@ int main() {
     else if(command=="echo"){
       std::string echo_line;
       std::cin.ignore();
-      std::getline(std::cin, echo_line);
-      std::cout<<" "<<echo_line<<std::endl;
+      std::getline(std::cin,echo_line);
+      std::cout<<echo_line<<std::endl;
       continue;
     }
     std::cout<<command<<": command not found"<<std::endl;
