@@ -12,6 +12,7 @@ int main() {
     std::string command;
     std::cin>> command;
     std::vector<std::string> commands={"exit","echo","type"};
+    std::string PATH="/usr/bin:/usr/local/bin";
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       std::cout<<command<<": command not found"<<std::endl;
       continue;
@@ -30,8 +31,13 @@ int main() {
     if(command==commands[2]){
       std::string command_type;
       std::cin>>command_type;
+      std::string directory=PATH+"/"+command_type;
+      char *val=getenv(directory.c_str());
       if (std::find(commands.begin(), commands.end(), command_type) == commands.end()) {
         std::cout<<command_type<<": not found"<<std::endl;
+      }
+      else if(val){
+          std::cout<<command_type<<" is "<<directory<<std::endl;
       }
       else{
         std::cout<<command_type<<" is a shell builtin"<<std::endl;
