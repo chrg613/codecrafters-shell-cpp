@@ -35,8 +35,8 @@ int main() {
         }
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
-      //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
       std::vector<std::string> args; 
+      args.push_back(command);
       std::string remaining;
       std::getline(std::cin, remaining);
       std::stringstream ss(remaining);
