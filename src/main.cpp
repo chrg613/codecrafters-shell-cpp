@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -13,7 +14,7 @@ int main() {
   while(running){
     std::cout << "$ ";
     std::string command;
-    std::cin>> command;
+    std::cin>>command;
     std::vector<std::string> commands={"exit","echo","type"};
     char* p=getenv("PATH");
     std::string path(p);
@@ -34,13 +35,12 @@ int main() {
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
-      std::vector<std::string> args;
-      std::string full_command;
-      std::cin.ignore();
-      std::getline(std::cin,full_command);
-      args.push_back(command);
+      std::vector<std::string> args; 
+      std::string f_command;     
       str="";
-      for(const char& i:full_command){
+      std::getline(std::cin,f_command);
+      args.push_back(command);
+      for(const char& i:f_command){
         if (i==' '){
           args.push_back(str);
           str="";
@@ -48,12 +48,16 @@ int main() {
         else{
           str.append(1,i);
         }
-        if(i==full_command.back()){
+        if(i==f_command.back()){
           args.push_back(str);
 
         }
       }
-      args.push_back(nullptr);
+
+      std::cout<<"Program was passed "<<args.size()<<std::endl;
+      for(int i=0;i<args.size();i++){
+        std::cout<<"Arg #"<<i<<": "<<args[i]<<std::endl;
+      }
       bool found=false;
         for(const auto& i:path_dirs){
           std::filesystem::path p = std::filesystem::path(i+"/"+command);
@@ -64,6 +68,7 @@ int main() {
               for (const auto& arg : args) {
                   argv.push_back(const_cast<char*>(arg.c_str()));
               }
+              argv.push_back(nullptr);
               pid_t pid= fork();
               if(pid==0){
                 execvp(p.c_str(), argv.data());
