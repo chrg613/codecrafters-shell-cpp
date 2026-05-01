@@ -113,8 +113,8 @@ int main() {
     }
     if(command==commands[3]){
       std::cout<<path<<std::endl;
-      
       continue;
+    }
     
   }
 }
