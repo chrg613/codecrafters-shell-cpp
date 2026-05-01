@@ -37,23 +37,13 @@ int main() {
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
       std::vector<std::string> args; 
-      std::string f_command;     
-      str="";
-      std::getline(std::cin,f_command);
-      args.push_back(command);
-      for(const char& i:f_command){
-        if (i==' '){
-          args.push_back(str);
-          str="";
-        }
-        else{
-          str.append(1,i);
-        }
-        
+      std::string remaining;
+      std::getline(std::cin, remaining);
+      std::stringstream ss(remaining);
+      std::string arg;
+      while (ss >> arg) {
+          args.push_back(arg);
       }
-      if(str!=""){
-          args.push_back(str);
-        }
 
       bool found=false;
         for(const auto& i:path_dirs){
