@@ -34,13 +34,42 @@ int main() {
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
+      std::vector<std::string> args;
+      std::string full_command;
+      std::cin.ignore();
+      std::getline(std::cin,full_command);
+      args.push_back(command);
+      str="";
+      for(const char& i:full_command){
+        if (i==' '){
+          args.push_back(str);
+          str="";
+        }
+        else{
+          str.append(1,i);
+        }
+        if(i==full_command.back()){
+          args.push_back(str);
 
+        }
+      }
+      args.push_back(nullptr);
       bool found=false;
         for(const auto& i:path_dirs){
           std::filesystem::path p = std::filesystem::path(i+"/"+command);
           if(std::filesystem::exists(p)){
             if (access(p.c_str(), X_OK) == 0) {
-              int execvp(p, nullptr);
+              std::vector<char *>argv ;
+              argv.push_back(const_cast<char*>(command.c_str()));
+              for (const auto& arg : args) {
+                  argv.push_back(const_cast<char*>(arg.c_str()));
+              }
+              pid_t pid= fork();
+              if(pid==0){
+                execvp(p.c_str(), argv.data());
+                exit(1);
+              }
+              waitpid(pid, nullptr, 0);
               found=true;
               break;
             }
