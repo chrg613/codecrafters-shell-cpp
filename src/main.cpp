@@ -9,13 +9,19 @@ int main() {
   bool running = true;
   while(running){
     std::cout << "$ ";
-    std::string x;
-    std::cin>> x;
-    if(x == "exit"){
+    std::string command;
+    std::cin>> command;
+    if(command == "exit"){
       running = false;
       continue;
     }
-    std::cout<<x<<": command not found"<<std::endl;
+    else if(command=="echo"){
+      std::string echo_line;
+      std::cin>>echo_line;
+      std::cout<<echo_line<<std::endl;
+      continue;
+    }
+    std::cout<<command<<": command not found"<<std::endl;
   }
   
   
