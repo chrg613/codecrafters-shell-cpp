@@ -11,6 +11,6 @@ int main() {
   std::cout << "$ ";
   std::string x;
   std::cin>> x;
-  std::cout<<x<<" command not found"<<std::endl;
+  std::cout<<x<<": command not found"<<std::endl;
 
 }
