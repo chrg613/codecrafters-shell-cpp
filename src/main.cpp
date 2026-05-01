@@ -28,10 +28,11 @@ int main() {
       else{
         str.append(1,i);
       }
-      if(i==path.back()){
-        path_dirs.push_back(str);
-      }
+      
     }
+    if(str!=""){
+          path_dirs.push_back(str);
+        }
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
@@ -48,13 +49,13 @@ int main() {
         else{
           str.append(1,i);
         }
-        if(i==f_command.back()){
-          args.push_back(str);
-
-        }
+        
       }
+      if(str!=""){
+          args.push_back(str);
+        }
 
-      std::cout<<"Program was passed "<<args.size()<<std::endl;
+      std::cout<<"Program was passed "<<args.size()<<" args (including program name)."<<std::endl;
       for(int i=0;i<args.size();i++){
         std::cout<<"Arg #"<<i<<": "<<args[i]<<std::endl;
       }
@@ -64,7 +65,6 @@ int main() {
           if(std::filesystem::exists(p)){
             if (access(p.c_str(), X_OK) == 0) {
               std::vector<char *>argv ;
-              argv.push_back(const_cast<char*>(command.c_str()));
               for (const auto& arg : args) {
                   argv.push_back(const_cast<char*>(arg.c_str()));
               }
