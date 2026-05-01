@@ -55,10 +55,6 @@ int main() {
           args.push_back(str);
         }
 
-      std::cout<<"Program was passed "<<args.size()<<" args (including program name)."<<std::endl;
-      for(int i=0;i<args.size();i++){
-        std::cout<<"Arg #"<<i<<": "<<args[i]<<std::endl;
-      }
       bool found=false;
         for(const auto& i:path_dirs){
           std::filesystem::path p = std::filesystem::path(i+"/"+command);
