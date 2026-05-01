@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sstream>
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -15,7 +16,7 @@ int main() {
     std::cout << "$ ";
     std::string command;
     std::cin>>command;
-    std::vector<std::string> commands={"exit","echo","type"};
+    std::vector<std::string> commands={"exit","echo","type","pwd"};
     char* p=getenv("PATH");
     std::string path(p);
     std::vector<std::string> path_dirs;
@@ -32,7 +33,7 @@ int main() {
     }
     if(str!=""){
           path_dirs.push_back(str);
-        }
+    }
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
       std::vector<std::string> args; 
@@ -110,6 +111,10 @@ int main() {
       
     continue;
     }
+    if(command==commands[3]){
+      std::cout<<path<<std::endl;
+      
+      continue;
     
   }
 }
