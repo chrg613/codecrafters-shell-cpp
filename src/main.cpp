@@ -17,7 +17,7 @@ int main() {
     }
     else if(command=="echo"){
       std::string echo_line;
-      std::cin>>echo_line;
+      std::getline(std::cin, echo_line);
       std::cout<<echo_line<<std::endl;
       continue;
     }
