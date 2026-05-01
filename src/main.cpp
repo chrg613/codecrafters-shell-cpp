@@ -33,7 +33,23 @@ int main() {
     }
     
     if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
-      std::cout<<command<<": command not found"<<std::endl;
+      //Program was passed 2 args (including program name). Arg #0 (program name): custom_exe_1234 Arg #1: alice
+
+      bool found=false;
+        for(const auto& i:path_dirs){
+          std::filesystem::path p = std::filesystem::path(i+"/"+command);
+          if(std::filesystem::exists(p)){
+            if (access(p.c_str(), X_OK) == 0) {
+              int execvp(p, nullptr);
+              found=true;
+              break;
+            }
+          }
+        }
+        if(!found){
+          std::cout<<command<<": command not found"<<std::endl;
+          continue;
+        }
       continue;
     }
     if(command == commands[0]){
@@ -57,7 +73,7 @@ int main() {
       else{
         bool found=false;
         for(const auto& i:path_dirs){
-          std::filesystem::path p = std::filesystem::path(i+"/"+command_type) ;
+          std::filesystem::path p = std::filesystem::path(i+"/"+command_type);
           if(std::filesystem::exists(p)){
             if (access(p.c_str(), X_OK) == 0) {
               std::cout<<command_type<<" is "<<p.string()<<std::endl;
