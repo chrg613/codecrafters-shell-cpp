@@ -119,6 +119,12 @@ int main() {
       std::string dir;
       std::cin.ignore();
       std::getline(std::cin,dir);
+      if(dir=="~"){
+        char* p=getenv("HOME");
+        std::string path(p);
+        std::filesystem::current_path(p);
+        continue;
+      }
       std::filesystem::path p=std::filesystem::path(dir);
       if(!std::filesystem::exists(p)){
         //cd: /does_not_exist: No such file or directory
