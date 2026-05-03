@@ -119,15 +119,15 @@ int main() {
       std::string dir;
       std::cin.ignore();
       std::getline(std::cin,dir);
-      std::filesystem::path p;
-      if(std::filesystem::current_path().string()!=dir){
-        std::filesystem::current_path(dir);
-        p= std::filesystem::path(dir);
-      }
+      std::filesystem::path p=std::filesystem::path(dir);
       if(!std::filesystem::exists(p)){
         //cd: /does_not_exist: No such file or directory
         std::cout<<"cd: "<<p.string()<<": No such file or directory"<<std::endl;
       }
+      if(std::filesystem::current_path().string()!=dir){
+        std::filesystem::current_path(dir);
+      }
+      
     }
   }
 }
