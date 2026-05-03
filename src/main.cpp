@@ -16,7 +16,7 @@ int main() {
     std::cout << "$ ";
     std::string command;
     std::cin>>command;
-    std::vector<std::string> commands={"exit","echo","type","pwd"};
+    std::vector<std::string> commands={"exit","echo","type","pwd","cd"};
     char* p=getenv("PATH");
     std::string path(p);
     std::vector<std::string> path_dirs;
@@ -115,6 +115,19 @@ int main() {
       std::cout<<std::filesystem::current_path().string()<<std::endl;
       continue;
     }
-    
+    if(command==commands[4]){
+      std::string dir;
+      std::cin.ignore();
+      std::getline(std::cin,dir);
+      std::filesystem::path p;
+      if(std::filesystem::current_path().string()!=dir){
+        std::filesystem::current_path(dir);
+        p= std::filesystem::path(dir);
+      }
+      if(!std::filesystem::exists(p)){
+        //cd: /does_not_exist: No such file or directory
+        std::cout<<"cd: "<<p.string()<<": No such file or directory"<<std::endl;
+      }
+    }
   }
 }
