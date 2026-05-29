@@ -6,17 +6,37 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sstream>
+#include <fcntl.h>
 
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
+
+
+
+
+
   bool running = true;
   while(running){
     std::cout << "$ ";
-    std::string command;
-    std::cin>>command;
+    std::string line;
+    std::getline(std::cin, line);
+    if(line==""){
+      continue;
+    }
+    std::vector<std::string> args;
+    std::stringstream ss(line);
+      std::string arg;
+      while (ss >> arg) {
+          args.push_back(arg);
+      }
     std::vector<std::string> commands={"exit","echo","type","pwd","cd"};
+
+
+
+
+
     char* p=getenv("PATH");
     std::string path(p);
     std::vector<std::string> path_dirs;
@@ -34,21 +54,37 @@ int main() {
     if(str!=""){
           path_dirs.push_back(str);
     }
-    
-    if (std::find(commands.begin(), commands.end(), command) == commands.end()) {
-      std::vector<std::string> args; 
-      args.push_back(command);
-      std::string remaining;
-      std::getline(std::cin, remaining);
-      std::stringstream ss(remaining);
-      std::string arg;
-      while (ss >> arg) {
-          args.push_back(arg);
-      }
 
+
+
+    bool redirected=false;
+    std::string output_file;
+    for(int i=0;i<args.size();++i){
+      if(args[i]==">"||args[i]=="1>"){
+        redirected=true;
+        if (i + 1 < args.size()) {
+            output_file = args[i + 1];
+        }
+        args.resize(i); 
+
+        break; 
+      }
+    }
+    int pre_stdout = dup(STDOUT_FILENO);
+    if(redirected){
+      int fd= open(output_file.c_str(),O_WRONLY | O_CREAT | O_TRUNC, 0644);
+      dup2(fd,STDOUT_FILENO);
+      close(fd);
+
+    }
+
+
+    if (std::find(commands.begin(), commands.end(), args[0]) == commands.end()) {
       bool found=false;
+
+
         for(const auto& i:path_dirs){
-          std::filesystem::path p = std::filesystem::path(i+"/"+command);
+          std::filesystem::path p = std::filesystem::path(i+"/"+args[0]);
           if(std::filesystem::exists(p)){
             if (access(p.c_str(), X_OK) == 0) {
               std::vector<char *>argv ;
@@ -67,55 +103,84 @@ int main() {
             }
           }
         }
+
+
         if(!found){
-          std::cout<<command<<": command not found"<<std::endl;
+          std::cout<<args[0]<<": command not found"<<std::endl;
           continue;
+
         }
-      continue;
+      
     }
-    if(command == commands[0]){
+
+
+
+
+
+    else if(args[0] == commands[0]){
       running = false;
-      continue;
+      
     }
-    if(command==commands[1]){
-      std::string echo_line;
-      std::cin.ignore();
-      std::getline(std::cin,echo_line);
-      std::cout<<echo_line<<std::endl;
-      continue;
-    }
-    if(command==commands[2]){
-      std::string command_type;
-      std::cin.ignore();
-      std::getline(std::cin,command_type);
-      if (std::find(commands.begin(), commands.end(), command_type) != commands.end()) {
-        std::cout<<command_type<<" is a shell builtin"<<std::endl;
+
+
+
+
+
+    else if(args[0]==commands[1]){
+      for(int i=1;i<args.size();++i){
+        std::cout<<args[i]<<" "<<std::endl;
       }
+      
+    }
+
+
+
+
+
+    else if(args[0]==commands[2]){
+      if (std::find(commands.begin(), commands.end(), args[1]) != commands.end()) {
+        std::cout<<args[1]<<" is a shell builtin"<<std::endl;
+      }
+
+
+
+
+
       else{
         bool found=false;
         for(const auto& i:path_dirs){
-          std::filesystem::path p = std::filesystem::path(i+"/"+command_type);
+          std::filesystem::path p = std::filesystem::path(i+"/"+args[1]);
           if(std::filesystem::exists(p)){
             if (access(p.c_str(), X_OK) == 0) {
-              std::cout<<command_type<<" is "<<p.string()<<std::endl;
+              std::cout<<args[1]<<" is "<<p.string()<<std::endl;
               found=true;
               break;
             }
           }
         }
         if(!found){
-          std::cout<<command_type<<": not found"<<std::endl;
+          std::cout<<args[1]<<": not found"<<std::endl;
           continue;
         }
       }
       
-    continue;
+    
     }
-    if(command==commands[3]){
+
+
+
+
+
+    else if(args[0]==commands[3]){
       std::cout<<std::filesystem::current_path().string()<<std::endl;
-      continue;
+      
     }
-    if(command==commands[4]){
+
+
+
+
+
+    else if(args[0]==commands[4]){
       std::string dir;
       std::cin.ignore();
       std::getline(std::cin,dir);
@@ -135,5 +200,12 @@ int main() {
       }
       
     }
+
+
+
+    
+    redirected=false;
+    dup2(pre_stdout,STDOUT_FILENO);
+    close(pre_stdout);
   }
 }
