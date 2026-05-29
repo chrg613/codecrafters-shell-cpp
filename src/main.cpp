@@ -128,7 +128,7 @@ int main() {
 
     else if(args[0]==commands[1]){
       for(int i=1;i<args.size();++i){
-        std::cout<<args[i]<<" "<<std::endl;
+        std::cout<<args[i]<<" ";
       }
       
     }
